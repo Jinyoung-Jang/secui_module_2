@@ -117,9 +117,9 @@ GET  /api/v1/health             # 시스템 헬스체크
 
 - **Collector (수집기)**: Python 3.9+, psutil, requests, schedule
 - **API Server (API 서버)**: FastAPI, Pydantic, JWT 인증
-- **Database (데이터베이스)**: InfluxDB 2.x (시계열) + PostgreSQL/SQLite (메타데이터)
-- **Dashboard (대시보드)**: Grafana 또는 커스텀 React 앱
-- **Alert Manager (알림 관리자)**: 커스텀 Python 또는 Prometheus AlertManager
+- **Database (데이터베이스)**: InfluxDB 2.x (시계열) + PostgreSQL (메타데이터)
+- **Dashboard (대시보드)**: Grafana
+- **Alert Manager (알림 관리자)**: 커스텀 Python (SMTP, Slack API, Webhooks)
 
 ## 설정
 

@@ -1,0 +1,63 @@
+collector:
+  # 메트릭 수집 간격 (초)
+  interval: 5
+  # API 서버 URL
+  server_url: http://localhost:8000
+  # API 인증 키 (환경변수 사용 권장)
+  api_key: ${API_KEY}
+  # 호스트네임 (자동 감지 시 비워두기)
+  hostname: ""
+  # 로컬 버퍼 디렉토리 (네트워크 장애 시 임시 저장)
+  buffer_dir: ./buffer
+  # 버퍼 최대 크기 (MB)
+  buffer_max_size: 100
+
+metrics:
+  # CPU 메트릭
+  cpu:
+    enabled: true
+    # 코어별 메트릭 수집 여부
+    per_cpu: true
+    # 수집 간격 (초, 0이면 collector.interval 사용)
+    interval: 5
+
+  # 메모리 메트릭
+  memory:
+    enabled: true
+    interval: 5
+
+  # 디스크 메트릭
+  disk:
+    enabled: true
+    # 디스크 사용량 수집 간격 (초)
+    interval: 30
+    # 제외할 파일시스템 타입
+    exclude_filesystems:
+      - tmpfs
+      - devtmpfs
+      - squashfs
+    # 제외할 마운트 포인트 패턴
+    exclude_mountpoints:
+      - /snap/*
+      - /sys/*
+      - /proc/*
+
+  # 네트워크 메트릭
+  network:
+    enabled: true
+    interval: 5
+    # 모니터링할 인터페이스 (빈 배열이면 모두)
+    interfaces: []
+    # 제외할 인터페이스 패턴
+    exclude_interfaces:
+      - lo
+
+logging:
+  # 로그 레벨: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  level: INFO
+  # 로그 파일 경로 (비워두면 stdout만 사용)
+  file: ./collector.log
+  # 로그 파일 최대 크기 (MB)
+  max_size: 10
+  # 백업 파일 개수
+  backup_count: 3
