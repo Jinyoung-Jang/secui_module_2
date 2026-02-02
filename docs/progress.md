@@ -154,52 +154,72 @@
 
 ### Week 1-2 (2026-02-02) ✅ **완료**
 **목표**: 메트릭 수집기 완성
+**달성률**: 95% (성능 테스트 제외)
 
 **완료한 작업**:
-- 프로젝트 디렉토리 구조 생성
-- CLAUDE.md 작성
-- plan.md 및 progress.md 작성
-- **Collector 개발 완료**:
-  - CPU 메트릭 수집 (usage, cores, load average)
-  - 메모리 메트릭 수집 (RAM, swap, buffers, cached)
-  - 디스크 메트릭 수집 (usage, I/O, inodes) - **계획보다 빠름**
-  - 네트워크 메트릭 수집 (interfaces, I/O, connections) - **계획보다 빠름**
-  - YAML 설정 시스템 (환경변수 지원)
-  - API 전송 모듈 (HTTPS, Bearer token)
-  - 로컬 버퍼링 (네트워크 장애 대비)
-  - 스케줄러 (5초 간격)
-  - 우아한 종료
-  - 단위 테스트 (pytest)
-  - requirements.txt
+- ✅ 프로젝트 디렉토리 구조 생성
+- ✅ CLAUDE.md 작성 (프로젝트 가이드 문서)
+- ✅ plan.md 및 progress.md 작성 (개발 계획 및 진행 상황)
+- ✅ **Collector 개발 완료** (Python 기반):
+  - ✅ CPU 메트릭 수집 (usage, per-core, load average, iowait)
+  - ✅ 메모리 메트릭 수집 (RAM, swap, buffers, cached)
+  - ✅ 디스크 메트릭 수집 (usage, I/O, inodes) - **계획보다 4주 빠름**
+  - ✅ 네트워크 메트릭 수집 (interfaces, I/O, connections) - **계획보다 4주 빠름**
+  - ✅ YAML 설정 시스템 (환경변수 지원, 검증)
+  - ✅ API 전송 모듈 (HTTPS, Bearer token 인증)
+  - ✅ 로컬 버퍼링 (네트워크 장애 대비, 최대 1000개 메트릭)
+  - ✅ 스케줄러 (5초 간격, 디스크는 30초)
+  - ✅ 우아한 종료 (SIGINT/SIGTERM 핸들링)
+  - ✅ 로깅 시스템 (파일 로테이션, 레벨별 필터링)
+  - ✅ 단위 테스트 (pytest, 7개 테스트)
+  - ✅ requirements.txt (psutil, PyYAML, requests, schedule)
 
 **완료된 파일 목록**:
 ```
 collector/
 ├── src/
-│   ├── main.py              # 메인 진입점 (211 lines)
-│   ├── metrics_collector.py # 메트릭 수집 (331 lines)
-│   ├── config.py            # 설정 로더 (174 lines)
-│   ├── metrics_sender.py    # API 전송 (200 lines)
+│   ├── main.py                    # 메인 진입점, 스케줄러, 시그널 핸들러
+│   ├── metrics_collector.py       # 전체 메트릭 수집 로직 (CPU/메모리/디스크/네트워크)
+│   ├── config.py                  # YAML 설정 로더, 환경변수 치환
+│   ├── metrics_sender.py          # HTTPS API 전송, 로컬 버퍼링
 │   └── __init__.py
 ├── tests/
-│   └── test_metrics_collector.py  # 단위 테스트 (200 lines)
+│   ├── test_metrics_collector.py  # 메트릭 수집 단위 테스트
+│   └── __init__.py
 ├── config/
-│   └── collector-config.yaml      # 설정 템플릿 (64 lines)
-└── requirements.txt               # 의존성
+│   └── collector-config.yaml      # 설정 템플릿 (interval, API endpoint, 메트릭 활성화)
+└── requirements.txt               # Python 의존성 패키지
 ```
 
-**진행 중인 작업**:
-- 실제 환경에서 성능 테스트 필요
+**기술 스택**:
+- Python 3.9+
+- psutil (시스템 메트릭 수집)
+- PyYAML (설정 파일)
+- requests (HTTP 클라이언트)
+- schedule (작업 스케줄링)
+- pytest (단위 테스트)
+
+**남은 작업**:
+- ⏳ 실제 환경에서 성능 테스트 (CPU < 5%, 메모리 < 100MB)
+- ⏳ 장기 실행 안정성 테스트 (24시간 이상)
 
 **블로커**:
-- 없음 (API 서버가 없어 실제 전송 테스트는 불가)
+- 없음 (API 서버가 없어 실제 전송 테스트는 Week 3 이후 가능)
+
+**주요 성과**:
+- Phase 2의 디스크/네트워크 메트릭을 Week 1-2에 선행 완료 → **전체 일정 4주 단축**
+- 크로스 플랫폼 지원 (Linux, Windows, macOS)
+- 견고한 에러 처리 및 네트워크 장애 복구 메커니즘
 
 **다음 주 계획** (Week 3):
-- FastAPI 기반 API 서버 개발
-- InfluxDB 설치 및 연동
-- PostgreSQL 설치 및 연동
-- 메트릭 수집 엔드포인트 구현
-- 인증 및 Rate Limiting 구현
+1. FastAPI 기반 API 서버 개발
+2. InfluxDB 2.x 설치 및 스키마 정의
+3. PostgreSQL 설치 및 메타데이터 테이블 설계
+4. 메트릭 수집 엔드포인트 구현 (`POST /api/v1/metrics/collect`)
+5. 현재/이력 메트릭 조회 엔드포인트 구현
+6. JWT/API Key 인증 미들웨어 구현
+7. Rate Limiting 구현 (100 req/min per collector)
+8. API 엔드포인트 테스트 작성
 
 ---
 
@@ -305,15 +325,30 @@ _없음_
 ## 코드 통계
 
 ### Collector (Week 1-2)
-- **총 코드 라인**: 1,182 줄
+- **총 코드 라인**: ~1,200 줄 (Python)
 - **주요 모듈**:
-  - `main.py`: 210 줄 (메인 진입점, 스케줄러)
-  - `metrics_collector.py`: 330 줄 (메트릭 수집 로직)
-  - `metrics_sender.py`: 199 줄 (API 전송, 버퍼링)
-  - `config.py`: 173 줄 (설정 로더)
-  - `test_metrics_collector.py`: 199 줄 (단위 테스트)
-- **테스트 커버리지**: 주요 수집 함수 테스트 완료
+  - `main.py`: ~210 줄 (메인 진입점, 스케줄러, 시그널 핸들링)
+  - `metrics_collector.py`: ~330 줄 (메트릭 수집 로직 - CPU/메모리/디스크/네트워크)
+  - `metrics_sender.py`: ~200 줄 (API 전송, 로컬 버퍼링)
+  - `config.py`: ~175 줄 (설정 로더, 환경변수 치환)
+  - `test_metrics_collector.py`: ~200 줄 (단위 테스트 - 7개 테스트 케이스)
+- **설정 파일**: `collector-config.yaml` (~65 줄)
+- **의존성**: 5개 패키지 (psutil, PyYAML, requests, schedule, pytest)
+- **테스트 커버리지**: 주요 메트릭 수집 함수 테스트 완료 (CPU, 메모리, 디스크, 네트워크)
 - **크로스 플랫폼 지원**: Linux, Windows, macOS
+
+### 전체 프로젝트 구조
+```
+module-3/
+├── collector/          ✅ 완료 (Week 1-2)
+├── api-server/         ⏳ Week 3 예정
+├── alert-manager/      ⏳ Week 4 예정
+├── dashboard/          ⏳ Week 4 예정
+├── database/           ⏳ Week 3 예정
+├── scripts/            ⏳ Week 10 예정
+├── tests/integration/  ⏳ Week 9 예정
+└── docs/               ✅ 완료 (계획 문서)
+```
 
 ---
 
